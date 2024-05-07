@@ -36,9 +36,29 @@ public with sharing class AccountHelper {
         }
     }
 
-    // void addressCopy(){
+    public static void addressCopy(List<Account> accounts) {
+        for (Account acc : accounts) {
+            if (acc.ShippingStreet != null) {
+                acc.BillingStreet = acc.ShippingStreet;
+            }
 
-    // }
+            if (acc.ShippingCity != null) {
+                acc.BillingCity = acc.ShippingCity;
+            }
+
+            if (acc.ShippingState != null) {
+                acc.BillingState = acc.ShippingState;
+            }
+
+            if (acc.ShippingPostalCode != null) {
+                acc.BillingPostalCode = acc.ShippingPostalCode;
+            }
+
+            if (acc.ShippingCountry != null) {
+                acc.BillingCountry = acc.ShippingCountry;
+            }
+        }
+    }
 
     //[public | private ] [static] data_type setRating (input parameters) {
     //  The body of the method

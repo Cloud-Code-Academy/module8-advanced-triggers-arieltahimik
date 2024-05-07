@@ -34,27 +34,7 @@ trigger AccountTrigger on Account (before insert, after insert) {
     * Trigger should only fire on insert.
     */
     if (Trigger.isBefore && Trigger.isInsert) {
-        for (Account acc : Trigger.new) {
-            if (acc.ShippingStreet != null) {
-                acc.BillingStreet = acc.ShippingStreet;
-            }
-
-            if (acc.ShippingCity != null) {
-                acc.BillingCity = acc.ShippingCity;
-            }
-
-            if (acc.ShippingState != null) {
-                acc.BillingState = acc.ShippingState;
-            }
-
-            if (acc.ShippingPostalCode != null) {
-                acc.BillingPostalCode = acc.ShippingPostalCode;
-            }
-
-            if (acc.ShippingCountry != null) {
-                acc.BillingCountry = acc.ShippingCountry;
-            }
-        }        
+        AccountHelper.addressCopy(Trigger.new);
     }
 
     /*
