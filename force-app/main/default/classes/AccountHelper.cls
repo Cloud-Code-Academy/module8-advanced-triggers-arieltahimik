@@ -28,13 +28,17 @@ Always ensure that your helper methods are bulk-safe to handle multiple records 
 */
 public with sharing class AccountHelper {
     
-    public void setTypeProspect(SObject objects){
-
+    public static void setTypeProspect(List<Account> accounts){
+        for (Account acc : accounts) {
+            if (acc.Type == null) {
+                acc.Type = 'Prospect';
+            }
+        }
     }
 
-    void addressCopy(){
+    // void addressCopy(){
 
-    }
+    // }
 
     //[public | private ] [static] data_type setRating (input parameters) {
     //  The body of the method
