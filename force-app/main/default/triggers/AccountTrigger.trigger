@@ -20,22 +20,18 @@ Let's dive into the specifics of each operation:
 trigger AccountTrigger on Account (before insert, after insert) {
 
     /*
-    * Account Trigger
+    * Account Trigger #1
     * When an account is inserted change the account type to 'Prospect' if there is no value in the type field.
     * Trigger should only fire on insert.
-    */
-    if (Trigger.isBefore && Trigger.isInsert) {
-        AccountHelper.setTypeProspect(Trigger.New);
-    }    
-
-    /*
-    * Account Trigger
+    ***
+    * Account Trigger #2
     * When an account is inserted copy the shipping address to the billing address.
     * Trigger should only fire on insert.
     */
     if (Trigger.isBefore && Trigger.isInsert) {
+        AccountHelper.setTypeProspect(Trigger.New);
         AccountHelper.addressCopy(Trigger.new);
-    }
+    }    
 
     /*
     * Account Trigger
