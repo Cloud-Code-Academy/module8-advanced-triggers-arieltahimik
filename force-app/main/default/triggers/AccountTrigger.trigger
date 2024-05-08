@@ -22,21 +22,17 @@ trigger AccountTrigger on Account (before insert, after insert) {
     /*
     * Account Trigger #1
     * When an account is inserted change the account type to 'Prospect' if there is no value in the type field.
-    * Trigger should only fire on insert.
-    ***
+    *
     * Account Trigger #2
-    * When an account is inserted copy the shipping address to the billing address.
-    * Trigger should only fire on insert.
-    ***
+    * When an account is inserted copy the shipping address to the billing address.    
+    *
     * Account Trigger #3
     * When an account is inserted set the rating to 'Hot' if the Phone, Website, and Fax is not empty.
-    * Trigger should only fire on insert.
-    ***
+    *
     * Account Trigger 4
     * When an account is inserted create a contact related to the account with the following default values:
     * LastName = 'DefaultContact'
     * Email = 'default@email.com'
-    * Trigger should only fire on insert.    
     */
     if (Trigger.isBefore && Trigger.isInsert) {
         AccountHelper.setTypeProspect(Trigger.new);
