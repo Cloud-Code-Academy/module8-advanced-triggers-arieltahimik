@@ -27,25 +27,17 @@ trigger AccountTrigger on Account (before insert, after insert) {
     * Account Trigger #2
     * When an account is inserted copy the shipping address to the billing address.
     * Trigger should only fire on insert.
-    */
-    if (Trigger.isBefore && Trigger.isInsert) {
-        AccountHelper.setTypeProspect(Trigger.New);
-        AccountHelper.addressCopy(Trigger.new);
-    }    
-
-    /*
-    * Account Trigger
+    ***
+    * Account Trigger #3
     * When an account is inserted set the rating to 'Hot' if the Phone, Website, and Fax is not empty.
     * Trigger should only fire on insert.
     */
     if (Trigger.isBefore && Trigger.isInsert) {
-        for (Account acc : Trigger.new) {
-            if (acc.Phone != null && acc.Website != null && acc.Fax != null) {
-                acc.Rating = 'Hot';
-            }
-        }
-    }
-    
+        AccountHelper.setTypeProspect(Trigger.new);
+        AccountHelper.addressCopy(Trigger.new);
+        AccountHelper.setRating(Trigger.new);
+    }    
+
     /*
     * Account Trigger
     * When an account is inserted create a contact related to the account with the following default values:
