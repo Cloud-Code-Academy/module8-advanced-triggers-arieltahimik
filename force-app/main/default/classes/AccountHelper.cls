@@ -17,11 +17,16 @@ Methods:
     - Purpose: Copy the shipping address of the Account to its billing address. 
     - Note: You'll likely need to adjust the method signature to accept the necessary parameters.
 
+
 - `setRating`: 
     - Purpose: Evaluate certain conditions on the Account and assign a rating based on that evaluation. You'll need to define the method's signature and implement its logic.
+    - When an account is inserted set the rating to 'Hot' if the Phone, Website, and Fax is not empty.
 
 - `defaultContact`: 
     - Purpose: Create a default contact related to the Account after the Account is inserted. You'll need to define the method's signature and implement its logic.
+    - When an account is inserted create a contact related to the account with the following default values:
+        LastName = 'DefaultContact'
+        Email = 'default@email.com'
 
 Remember:
 Always ensure that your helper methods are bulk-safe to handle multiple records efficiently. 
@@ -30,23 +35,41 @@ public with sharing class AccountHelper {
     
     public static void setTypeProspect(List<Account> accounts){
         for (Account acc : accounts) {
-            if (acc.Type == null) { acc.Type = 'Prospect'; }
+            if (acc.Type == null) { 
+                acc.Type = 'Prospect'; 
+            }
         }
     }
 
     public static void addressCopy(List<Account> accounts) {
         for (Account acc : accounts) {
-            if (acc.ShippingStreet != null) { acc.BillingStreet = acc.ShippingStreet; }
-            if (acc.ShippingCity != null) { acc.BillingCity = acc.ShippingCity; }
-            if (acc.ShippingState != null) { acc.BillingState = acc.ShippingState; }
-            if (acc.ShippingPostalCode != null) { acc.BillingPostalCode = acc.ShippingPostalCode; }
-            if (acc.ShippingCountry != null) { acc.BillingCountry = acc.ShippingCountry; }
+            if (acc.ShippingStreet != null) { 
+                acc.BillingStreet = acc.ShippingStreet; 
+            }
+            
+            if (acc.ShippingCity != null) { 
+                acc.BillingCity = acc.ShippingCity; 
+            }
+            
+            if (acc.ShippingState != null) { 
+                acc.BillingState = acc.ShippingState; 
+            }
+            
+            if (acc.ShippingPostalCode != null) { 
+                acc.BillingPostalCode = acc.ShippingPostalCode; 
+            }
+
+            if (acc.ShippingCountry != null) { 
+                acc.BillingCountry = acc.ShippingCountry; 
+            }
         }
     }
 
     public static void setRating(List<Account> accounts) {
         for (Account acc : accounts) {
-            if (acc.Phone != null && acc.Website != null && acc.Fax != null) { acc.Rating = 'Hot'; }
+            if (acc.Phone != null && acc.Website != null && acc.Fax != null) { 
+                acc.Rating = 'Hot'; 
+            }
         }
     }
 
