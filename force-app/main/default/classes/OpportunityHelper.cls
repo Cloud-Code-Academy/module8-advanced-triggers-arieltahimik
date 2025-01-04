@@ -73,7 +73,7 @@ public with sharing class OpportunityHelper {
         }
     }
 
-    public static void assignPrimaryContact(Map<Id,Opportunity> oppsMap) {
+    public static void assignPrimaryContact(Map<Id,Opportunity> newOppMap) {
         /*
         assignPrimaryContact:
         - Assigns a primary contact with the title of 'VP Sales' to undeleted Opportunities.
@@ -82,7 +82,7 @@ public with sharing class OpportunityHelper {
 
         // Get all Account Ids from the opportunities
         Set<Id> accountIds = new Set<Id>();
-        for (Opportunity opp : oppsMap.values()) {
+        for (Opportunity opp : newOppMap.values()) {
             accountIds.add(opp.AccountId);  
         }
 
@@ -94,16 +94,60 @@ public with sharing class OpportunityHelper {
         }
 
         Map<Id, Opportunity> oppMap = new Map<Id, Opportunity>();
-        for (Opportunity opp : oppsMap.values()){            
-            //Contact primaryContact = [SELECT Id, AccountId FROM Contact WHERE Title = 'VP Sales' AND AccountId = :opp.AccountId LIMIT 1];
-            if (opp.Primary_Contact__c == null){
+        for (Opportunity opp : newOppMap.values()) {            
+            if (opp.Primary_Contact__c == null) {
                 Opportunity oppToUpdate = new Opportunity(Id = opp.Id);
                 Contact primaryContact = accIdToConMap.get(opp.AccountId);
                 oppToUpdate.Primary_Contact__c = primaryContact.Id;
-                //oppToUpdate.Primary_Contact__c = accIdToConMap.get(opp.AccountId).Id;
+                //oppToUpdate.Primary_Contact__c = accIdToConMap.get(opp.AccountId).Id; // The 2 lines above, combined.
                 oppMap.put(opp.Id, oppToUpdate);
             }
         }
         update oppMap.values();    
+    }
+
+    public static void amountValidation(List<Opportunity> newOppList) {
+        for (Opportunity opp : newOppList) {
+            if (opp.Amount <= 5000) {
+                opp.addError('Opportunity amount must be greater than 5000');
+            }
+        }
+    }
+
+    public static void deleteCloseWonOpportunity(List<Opportunity> oldOppList) {
+        // When an opportunity is deleted prevent the deletion of a closed won opportunity if the account industry is 'Banking'.
+        Map<Id, Account> accounts = new Map<Id, Account>([SELECT Id, Industry FROM Account WHERE Id IN (SELECT AccountId FROM Opportunity WHERE Id IN :oldOppList)]);
+        for (Opportunity opp : oldOppList) {
+            if ((opp.StageName == 'Closed Won' && accounts.get(opp.AccountId).Industry == 'Banking')) {
+                opp.addError('Cannot delete closed opportunity');
+            }
+        }
+    }
+
+    public static void setPrimaryContact(List<Opportunity> newOppList) {
+        // When an opportunity is updated set the primary contact on the opportunity to the contact with the title of 'CEO'.
+
+        // Get contacts related to the opportunity account
+        Set<Id> accountIds = new Set<Id>();
+        for(Opportunity opp : newOppList){
+            accountIds.add(opp.AccountId);
+        }
+        Map<Id, Contact> contacts = new Map<Id, Contact>([SELECT Id, FirstName, AccountId FROM Contact WHERE AccountId IN :accountIds AND Title = 'CEO' ORDER BY FirstName ASC]);
+
+        Map<Id, Contact> accountIdToContact = new Map<Id, Contact>();
+
+        for (Contact con : contacts.values()) {
+            if (!accountIdToContact.containsKey(con.AccountId)) {
+                accountIdToContact.put(con.AccountId, con);
+            }
+        }
+
+        for(Opportunity opp : newOppList){
+            if(opp.Primary_Contact__c == null){
+                if (accountIdToContact.containsKey(opp.AccountId)){
+                    opp.Primary_Contact__c = accountIdToContact.get(opp.AccountId).Id;
+                }
+            }
+        }
     }
 }
