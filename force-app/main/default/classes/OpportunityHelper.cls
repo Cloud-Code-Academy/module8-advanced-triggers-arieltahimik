@@ -11,11 +11,11 @@ public with sharing class OpportunityHelper {
 
     public static void validateCloseOpportunity(List<Opportunity> oldOppList) {
         // When an opportunity is deleted prevent the deletion of a closed lost/won opportunity.
-        Map<Id, Account> accounts = new Map<Id, Account>([
-            SELECT Id, Industry 
-            FROM Account 
-            WHERE Id IN (SELECT AccountId FROM Opportunity WHERE Id IN :oldOppList)
-        ]);
+        // Map<Id, Account> accounts = new Map<Id, Account>([
+        //     SELECT Id, Industry 
+        //     FROM Account 
+        //     WHERE Id IN (SELECT AccountId FROM Opportunity WHERE Id IN :oldOppList)
+        // ]);
         for(Opportunity opp : oldOppList) {
             if (opp.IsClosed) {
                 opp.addError('Cannot delete closed opportunity');
@@ -54,7 +54,7 @@ public with sharing class OpportunityHelper {
         - Uses Salesforce's Messaging.SingleEmailMessage to send the email.
         */
         List<Messaging.SingleEmailMessage> mails = new List<Messaging.SingleEmailMessage>();
-        Map<Id, User> userMap = new Map<Id, User>([SELECT Id, Email FROM User]);
+        Map<Id, User> userMap = new Map<Id, User>([SELECT Id, Email FROM User WHERE Email != Null]);
         for (Opportunity opp : oldOppList){
             Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();            
             //String[] toAddresses = new String[] {[SELECT Id, Email FROM User WHERE Id = :opp.OwnerId].Email};
